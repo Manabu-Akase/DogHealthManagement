@@ -1,0 +1,184 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;    //ユーザーの入力を受け取るために必要
+
+//飼い犬の情報を管理するためのクラス
+
+class MyDog {
+    String name;
+    int age;
+    String breed;
+
+    //犬の情報を初期化するコンストラクタ
+    
+    MyDog(String name, int age, String breed) {
+        this.name = name;
+        this.age = age;
+        this.breed = breed;
+    }
+}
+
+ // 健康管理を表すクラス、１日ごとのデータ
+
+class HealthRecord {
+    String date;
+    double weight;
+    String food;
+    int walkMinutes;
+    String condition;
+
+    //健康管理を初期化するコンストラクタ
+    HealthRecord(String date, double weight, String food, int walkMinutes, String condition) {
+        this.date = date;
+        this.weight = weight;
+        this.food = food;
+        this.walkMinutes = walkMinutes;
+        this.condition = condition;
+    }
+
+    //記録した内容を見やすく整形して文字列で返す
+    
+    public String toString() {
+        return date + " | 体重: " + weight + "kg | 食事: " + food +
+               " | 散歩: " + walkMinutes + "分 | 状態: " + condition;
+    }
+}
+
+public class Mydog {
+    static Scanner scanner = new Scanner(System.in);  // ユーザーから入力を受け取るためのコード
+    static MyDog dog; //登録された犬の情報を呼び出す
+    static List<HealthRecord> records = new ArrayList<>();   //健康記録を複数保存するリスト
+
+    
+    public static void main(String[] args) {
+        System.out.println("犬の健康管理アプリへようこそ！"); //開始
+        registerDog();   // 犬の情報を登録
+        
+        //メニューを表示し続ける無限ループをかく
+
+        while (true) {
+            System.out.println("\n1: 記録追加 | 2: 記録表示 | 3: 終了 | 4: 平均表示 | 5: 最新状態 | 6: 体重グラフ");
+            System.out.print("選択してください: ");
+            String input = scanner.nextLine().trim();
+
+            //入力に応じて処理を分ける
+            switch (input) {
+                case "1":
+                    addHealthRecord();  //記録追加
+                    break;
+                case "2":
+                    showRecords();  //記録表示
+                    break;
+                case "3":
+                    System.out.println("終了します。");  //終了
+                    return; //プログラムを終了する
+                case "4":
+                    showAverages();  //平均体重と散歩時間を表示する。
+                    break;
+                case "5":
+                    showLatestRecord(); // 記録内容を表示する
+                    break;
+                case "6":
+                    showWeightGraph();  //体重変化をグラフで表示する
+                    
+                    break;
+                default:
+                    System.out.println("無効な選択です。1〜6を入力してください。");
+            }
+        }
+    }
+ //犬の名前、年齢、犬種を入力して登録する処理
+    
+    static void registerDog() {
+        System.out.println("犬の名前: ");
+        String name = scanner.nextLine();
+        System.out.println("年齢: ");
+        int age = Integer.parseInt(scanner.nextLine());
+        System.out.println("犬種: ");
+        String breed = scanner.nextLine();
+
+        dog = new MyDog(name, age, breed);
+        System.out.println("登録完了: " + dog.name + " (" + dog.breed + ", " + dog.age + "歳)");
+    }
+
+    // 健康管理を追加する処理
+    static void addHealthRecord() {
+        System.out.println("日付（例: 2025-05-15）: ");
+        String date = scanner.nextLine();
+        System.out.println("体重（kg）: ");
+        double weight = Double.parseDouble(scanner.nextLine());  //少数の読み取りはこの記述で
+        System.out.println("食事内容: ");
+        String food = scanner.nextLine();
+        System.out.println("散歩時間（分）: ");
+        int walkMinutes = Integer.parseInt(scanner.nextLine());
+        System.out.println("健康状態: ");
+        String condition = scanner.nextLine();
+        
+        //入力された内容で新しい健康管理を作成する。リストに追加する。
+
+        records.add(new HealthRecord(date, weight, food, walkMinutes, condition));
+        System.out.println("✅ 記録を追加しました。");
+    }
+
+    //　記録を表示する処理
+    static void showRecords() {
+        System.out.println("\n📒【" + dog.name + " の健康記録】");
+        if (records.isEmpty()) {
+            System.out.println("記録はまだありません。");
+            return;
+        }
+        for (HealthRecord r : records) {
+            System.out.println(r);   //toString()が自動で呼ばれる
+        }
+    }
+  //記録の平均体重と、平均散歩時間を計算して表示したい
+    
+    static void showAverages() {
+        if (records.isEmpty()) {
+            System.out.println("記録がありません。");
+            return;
+        }
+
+        double totalWeight = 0;
+        int totalWalk = 0;
+        for (HealthRecord r : records) {
+            totalWeight += r.weight;
+            totalWalk += r.walkMinutes;
+        }
+
+        double avgWeight = totalWeight / records.size();  //平均体重を表しています。
+        double avgWalk = (double) totalWalk / records.size(); // 平均散歩時間を表しています
+
+        System.out.printf("平均体重: %.2fkg\n", avgWeight);
+        System.out.printf("平均散歩時間: %.1f分\n", avgWalk);
+    }
+ // いちばん新しい記録を表示する
+    static void showLatestRecord() {
+        if (records.isEmpty()) {
+            System.out.println("記録がありません。");
+            return;
+        }
+
+        HealthRecord latest = records.get(records.size() - 1);
+        System.out.println("最新の健康記録:");
+        System.out.println(latest);
+    }
+// 体重の変化をバーグラフ風に文字で表現
+    
+    
+    static void showWeightGraph() {
+        if (records.isEmpty()) {
+            System.out.println("記録がありません。");
+            return;
+        }
+
+        System.out.println("体重変化グラフ（縦軸: kg）");
+
+        for (HealthRecord r : records) {
+            int barLength = (int)(r.weight * 2); // 体重に比例する長さに変換
+            String bar = new String(new char[barLength]).replace('\0', '■'); //▪︎を並べてグラフ表示
+            
+            System.out.printf("%s %.1fkg | %s%n", r.date, r.weight, bar);
+        }
+    }
+}
