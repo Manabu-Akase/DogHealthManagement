@@ -40,11 +40,11 @@ class HealthRecord {
     
     public String toString() {
         return date + " | 体重: " + weight + "kg | 食事: " + food +
-               " | 散歩: " + walkMinutes + "分 | 状態: " + condition;
+               " | 散歩: " + walkMinutes + "分 | 状態: " + condition ;
     }
 }
 
-public class Mydog {
+public class DogHealthManager {
     static Scanner scanner = new Scanner(System.in);  // ユーザーから入力を受け取るためのコード
     static MyDog dog; //登録された犬の情報を呼び出す
     static List<HealthRecord> records = new ArrayList<>();   //健康記録を複数保存するリスト
@@ -52,13 +52,14 @@ public class Mydog {
     
     public static void main(String[] args) {
         System.out.println("犬の健康管理アプリへようこそ！"); //開始
-        registerDog();   // 犬の情報を登録
+        
+registerDog();   // 犬の情報を登録
         
         //メニューを表示し続ける無限ループをかく
 
         while (true) {
             System.out.println("\n1: 記録追加 | 2: 記録表示 | 3: 終了 | 4: 平均表示 | 5: 最新状態 | 6: 体重グラフ");
-            System.out.print("選択してください: ");
+            System.out.println("選択してください: ");
             String input = scanner.nextLine().trim();
 
             //入力に応じて処理を分ける
@@ -80,7 +81,6 @@ public class Mydog {
                     break;
                 case "6":
                     showWeightGraph();  //体重変化をグラフで表示する
-                    
                     break;
                 default:
                     System.out.println("無効な選択です。1〜6を入力してください。");
@@ -90,10 +90,22 @@ public class Mydog {
  //犬の名前、年齢、犬種を入力して登録する処理
     
     static void registerDog() {
+    	
         System.out.println("犬の名前: ");
         String name = scanner.nextLine();
-        System.out.println("年齢: ");
-        int age = Integer.parseInt(scanner.nextLine());
+        
+        int age = 0 ;
+        while(true) {
+        	System.out.println("年齢: ");
+        	String input = scanner.nextLine();
+        	try {
+        		age = Integer.parseInt(input);
+        		break;
+        	} catch (NumberFormatException e) {
+        		System.out.println("△数字で入力してください。");
+        	}
+        }
+        
         System.out.println("犬種: ");
         String breed = scanner.nextLine();
 
@@ -105,12 +117,36 @@ public class Mydog {
     static void addHealthRecord() {
         System.out.println("日付（例: 2025-05-15）: ");
         String date = scanner.nextLine();
-        System.out.println("体重（kg）: ");
-        double weight = Double.parseDouble(scanner.nextLine());  //少数の読み取りはこの記述で
+        
+        double weight = 0 ;
+        while(true) {
+        	System.out.println("体重(kg):");
+        	String input = scanner.nextLine();
+        	try {
+        		weight = Double.parseDouble(input);//少数の読み取りはこの記述で
+        		break ;
+        	} catch (NumberFormatException e) {
+        		System.out.println("△数字で入力してください。");
+        	}
+        }
+        		
+        
         System.out.println("食事内容: ");
         String food = scanner.nextLine();
-        System.out.println("散歩時間（分）: ");
-        int walkMinutes = Integer.parseInt(scanner.nextLine());
+        
+        int walkMinutes = 0 ;
+        while(true) {
+        	System.out.println("散歩時間（分）: ");
+        	String input = scanner.nextLine();
+        	try {
+        		walkMinutes = Integer.parseInt(input);
+        		break;
+        	}catch (NumberFormatException e) {
+        		System.out.println("△数字で入力してください。");
+        	}
+        	
+        }
+        
         System.out.println("健康状態: ");
         String condition = scanner.nextLine();
         
@@ -164,7 +200,6 @@ public class Mydog {
         System.out.println(latest);
     }
 // 体重の変化をバーグラフ風に文字で表現
-    
     
     static void showWeightGraph() {
         if (records.isEmpty()) {
